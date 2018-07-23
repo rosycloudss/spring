@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lw.dao.StudentDaoInterface">
+	<resultMap type="student" id="studentResultMap">
+		<!-- 主键 -->
+		<id property="studentNo" column="stu_no" />
+		<result property="name" column="stu_name" />
+		<result property="sex" column="sex" />
+		<result property="birthday" column="birthday" />
+		<result property="major" column="major" />
+		<result property="school" column="school" />
+		<result property="email" column="email" />
+		<result property="national" column="national" />
+		<collection property="loginRecordList" column="stu_no"
+			ofType="studentLoginRecord" select="">
+			<id property="studentNo" column="stu_no" />
+			<result property="loginTime" column="login_time" />
+		</collection>
+	</resultMap>
+
+	<select id="queryOne" parameterType="string"
+		resultType="studentResultMap">
+		select stu_no studentNo, stu_name name, sex, birthday,
+		school, major, email, national from stu_info where stu_no=#{stuNo}
+	</select>
+
+	<select id="query" parameterType="student"
+		resultType="studentResultMap">
+		select stu_no studentNo, stu_name name, sex, birthday, school, major,
+		email, national from stu_info
+		<where>
+			<if test="studentNo != null">
+				and stu_no=#{studentNo}
+			</if>
+
+		</where>
+	</select>
+	<!--
+		useGeneratedKeys 设置为"true" 表明哟要mybatis获取数据库自动生成的主键,
+		keyProperty ="studentNo" 指明吧获取的主键值注入到Student的studentNo属性中
+	 -->
+	<insert id="add" parameterType="student" keyProperty="studentNo"
+		useGeneratedKeys="true">
+		insert into stu_info(stu_no, stu_name, sex,
+		birthday,
+		school, major, email, national) value(#{studentNo}, #{name
+		}, #{sex},
+		#{birthday }, #{major }, #{school }, #{email }, #{national
+		})
+	</insert>
+
+	<delete id="delete" parameterType="string">
+		delete from stu_info where
+		stu_no=#{stuNo}
+	</delete>
+
+	<update id="update" parameterType="student">
+		update stu_info set
+		stu_name=#{name}, sex=#{sex}, birthday=#{birthday }, school=#{school
+		}, major=#{major }, email=#{email }, national=#{national } where
+		stu_no=#{studentNo }
+	</update>
+
+</mapper>
